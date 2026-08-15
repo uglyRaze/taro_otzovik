@@ -274,15 +274,32 @@
    вся логика уже вызывает эти две функции.
    ========================================================== */
 
+const API_URL = "https://locisvpn.online/api/reviews";
+
 async function loadReviewsFromServer() {
-  // TODO: заменить на реальный fetch() к бэкенду
-  return null; // null означает "используем локальные заглушки ниже"
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Ошибка загрузки отзывов");
+    return await res.json();
+  } catch (err) {
+    console.error(err);
+    return null; // если сервер недоступен — покажем 50 заглушек
+  }
 }
 
 async function saveReviewToServer(review) {
-  // TODO: заменить на реальный fetch() POST к бэкенду
-  console.log("Заглушка: отзыв не отправлен на сервер", review);
-  return review;
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(review)
+    });
+    if (!res.ok) throw new Error("Ошибка отправки отзыва");
+    return await res.json();
+  } catch (err) {
+    console.error(err);
+    return review; // при ошибке отзыв всё равно покажется локально
+  }
 }
 
 /* ========================================================== */
